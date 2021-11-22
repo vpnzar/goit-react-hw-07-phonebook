@@ -1,10 +1,10 @@
-import React from 'react';
-import s from './Filter.module.css';
-import { useDispatch } from 'react-redux';
-import { filterItems } from '../../Redux/contacts-actions';
-import PropTypes from 'prop-types';
+import React from "react";
+import s from "./Filter.module.css";
+import { useDispatch } from "react-redux";
+import { filterItems } from "../../Redux/contacts-actions";
+import PropTypes from "prop-types";
 
-const Filter = ({ e }) => {
+const Filter = () => {
   const dispatch = useDispatch();
 
   return (
@@ -15,7 +15,7 @@ const Filter = ({ e }) => {
         name="name"
         pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
         title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
-        onChange={e => {
+        onChange={(e) => {
           dispatch(filterItems(e.target.value));
         }}
       />

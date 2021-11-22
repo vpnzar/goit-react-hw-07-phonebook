@@ -1,29 +1,36 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { submitForm } from '../../Redux/contacts-actions';
-import s from './ContactForm.module.css';
-import { getContacts } from '../../Redux/contacts-selectors';
-import { v4 as uuidv4 } from 'uuid';
+import { useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { submitForm } from "../../Redux/contacts-actions";
+import s from "./ContactForm.module.css";
+// import { getContacts } from "../../Redux/contacts-selectors";
+import { v4 as uuidv4 } from "uuid";
+import {
+  useFetchContactsQuery,
+  useAddContactMutation,
+} from "../Services/contactsApi";
 
 function ContactForm() {
-  const dispatch = useDispatch();
-  const contactsAll = useSelector(getContacts);
+  const { data } = useFetchContactsQuery();
+  const [addContact, { isLoading: isAdding }] = useAddContactMutation();
+
+  // const dispatch = useDispatch();
+  // const contactsAll = useSelector(getContacts);
   const inputNameId = uuidv4();
   const inputNumberId = uuidv4();
   const id = uuidv4();
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
   const contact = { name, number, id };
 
-  const handleChangeEvent = e => {
+  const handleChangeEvent = (e) => {
     const { name, value } = e.target;
 
     switch (name) {
-      case 'name':
+      case "name":
         setName(value);
         break;
 
-      case 'number':
+      case "number":
         setNumber(value);
         break;
 
@@ -32,15 +39,15 @@ function ContactForm() {
     }
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, number } = e.target;
-    const filterResult = contactsAll.some(value => value.name === contact.name);
+    const filterResult = data.some((value) => value.name === contact.name);
     if (!filterResult) {
-      dispatch(submitForm(contact));
+      await addContact(contact);
     } else alert(`${contact.name} is already in contacts`);
-    name.value = '';
-    number.value = '';
+    name.value = "";
+    number.value = "";
   };
 
   return (
@@ -66,24 +73,10 @@ function ContactForm() {
           id={inputNumberId}
           onChange={handleChangeEvent}
         />
-        <button type="submit">Add contacts</button>
+        <button type="submit">{isAdding ? "Adding" : "Add Contact"}</button>
       </form>
     </div>
   );
 }
-
-// const mapStateToProps = state => {
-//   return {
-//     submitVal: state.contacts.items,
-//   };
-// };
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     onSubmitForm: contact => dispatch(submitForm(contact)),
-//   };
-// };
-
-// export default connect(null, mapDispatchToProps)(ContactForm);
 
 export default ContactForm;
